@@ -33,22 +33,7 @@ export const VIEWER_HTML = `
             height: 100%;
         }
 
-        #prompt-preview {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            background: rgba(10, 10, 15, 0.9);
-            border: 1px solid rgba(233, 61, 130, 0.3);
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 11px;
-            color: #E93D82;
-            backdrop-filter: blur(4px);
-            font-family: 'Consolas', 'Monaco', monospace;
-            word-break: break-all;
-            line-height: 1.4;
-        }
+        /* prompt-preview is now inside color-picker-container */
 
         #info-panel {
             position: absolute;
@@ -117,12 +102,91 @@ export const VIEWER_HTML = `
         #reset-btn:active {
             transform: scale(0.95);
         }
+
+        /* Color picker styles */
+        #color-picker-container {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid rgba(233, 61, 130, 0.3);
+            border-radius: 6px;
+            padding: 6px 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        #prompt-preview {
+            flex: 1;
+            font-size: 11px;
+            color: #E93D82;
+            font-family: 'Consolas', 'Monaco', monospace;
+            word-break: break-all;
+            line-height: 1.4;
+            margin-right: 12px;
+        }
+
+        #color-section {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        #color-picker-label {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #color-picker {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+
+        #color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        #color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        #color-picker::-moz-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        #color-hex-display {
+            font-size: 11px;
+            color: #FFB800;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-weight: 600;
+            min-width: 60px;
+        }
     </style>
 </head>
 <body>
     <div id="container">
         <div id="threejs-container"></div>
-        <div id="prompt-preview">light from front, eye level</div>
+        <div id="color-picker-container">
+            <div id="prompt-preview">light from front, eye level</div>
+            <div id="color-section">
+                <span id="color-picker-label">Color</span>
+                <input type="color" id="color-picker" value="#FFFFFF">
+                <span id="color-hex-display">#FFFFFF</span>
+            </div>
+        </div>
         <div id="info-panel">
             <div class="param-item">
                 <div class="param-label">Azimuth</div>
@@ -160,6 +224,27 @@ export const VIEWER_HTML = `
         const vValueEl = document.getElementById('v-value');
         const zValueEl = document.getElementById('z-value');
         const promptPreviewEl = document.getElementById('prompt-preview');
+        const colorPicker = document.getElementById('color-picker');
+        const colorHexDisplay = document.getElementById('color-hex-display');
+
+        // Color picker event handler
+        colorPicker.addEventListener('input', (e) => {
+            state.lightColor = e.target.value;
+            colorHexDisplay.textContent = e.target.value.toUpperCase();
+            if (threeScene) {
+                threeScene.syncFromState();
+            }
+            sendAngleUpdate();
+        });
+
+        colorPicker.addEventListener('change', (e) => {
+            state.lightColor = e.target.value;
+            colorHexDisplay.textContent = e.target.value.toUpperCase();
+            if (threeScene) {
+                threeScene.syncFromState();
+            }
+            sendAngleUpdate();
+        });
 
         function generatePromptPreview() {
             const h_angle = state.azimuth % 360;
@@ -264,6 +349,7 @@ export const VIEWER_HTML = `
                 horizontal: Math.round(state.azimuth),
                 vertical: Math.round(state.elevation),
                 zoom: Math.round(state.distance * 10) / 10,
+                lightColor: state.lightColor || "#FFFFFF",
                 useDefaultPrompts: state.useDefaultPrompts || false
             }, '*');
         }
@@ -819,8 +905,11 @@ export const VIEWER_HTML = `
                     liveDistance = state.distance;
                     updateVisuals();
                     updateDisplay();
-                    // Update light color on distance handle (light source indicator)
+                    // Update color picker display
                     if (state.lightColor) {
+                        colorPicker.value = state.lightColor;
+                        colorHexDisplay.textContent = state.lightColor.toUpperCase();
+                        // Update light color on distance handle (light source indicator)
                         distHandleMat.color.set(state.lightColor);
                         distHandleMat.emissive.set(state.lightColor);
                         distGlowMat.color.set(state.lightColor);

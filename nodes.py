@@ -1,9 +1,9 @@
 """
 Qwen Multiangle Lightning Node for ComfyUI
-Verified Stable Version: 
-- Explicit interval checks for elevation.
-- Light Position Priority.
-- No Shadows.
+Multi-Light Configuration Version:
+- Supports multiple light source configurations via Tab UI
+- Explicit interval checks for elevation
+- Light Position Priority
 """
 
 import numpy as np
@@ -11,11 +11,16 @@ from PIL import Image
 import base64
 import io
 import hashlib
-import torch
+import json
 
 _cache = {}
 
 class QwenMultiangleLightningNode:
+    """
+    Lighting Control Node - Multi-Light Configuration Edition
+    Supports multiple light configurations with Tab-based UI.
+    """
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -29,7 +34,7 @@ class QwenMultiangleLightningNode:
                 "light_intensity": ("FLOAT", {
                     "default": 5.0, "min": 0.0, "max": 10.0, "step": 0.1, "display": "slider"
                 }),
-                "light_color_hex": ("COLOR", {"default": "#FFFFFF"}),
+                "light_color_hex": ("STRING", {"default": "#FFFFFF"}),
                 "cinematic_mode": ("BOOLEAN", {
                     "default": True, "display": "checkbox"
                 }),
@@ -39,11 +44,13 @@ class QwenMultiangleLightningNode:
             },
             "hidden": {
                 "unique_id": "UNIQUE_ID",
+                "light_configs_json": ("STRING", {"default": "[]"}),
             }
         }
 
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("lighting_prompt",)
+    OUTPUT_IS_LIST = (True,)  # 支持多输出
     FUNCTION = "generate_lighting_prompt"
     CATEGORY = "image/lighting"
     OUTPUT_NODE = True
@@ -59,21 +66,10 @@ class QwenMultiangleLightningNode:
         except Exception:
             return str(hash(str(image)))
 
-    def generate_lighting_prompt(self, light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode=True, image=None, unique_id=None):
-        cache_key = str(unique_id) if unique_id else "default"
-        image_hash = self._compute_image_hash(image)
-        cached = _cache.get(cache_key, {})
-        
-        if (cached.get('azimuth') == light_azimuth and 
-            cached.get('elevation') == light_elevation and 
-            cached.get('intensity') == light_intensity and
-            cached.get('color') == light_color_hex and
-            cached.get('cinematic') == cinematic_mode and
-            cached.get('image_hash') == image_hash):
-            return cached['result']
-
+    def _build_prompt(self, azimuth, elevation, intensity, color_hex, cinematic_mode):
+        """根据单个配置生成 prompt"""
         # 1. 方位区间判断
-        az = light_azimuth % 360
+        az = azimuth % 360
         if (az >= 337.5) or (az < 22.5): pos_desc = "light source in front"
         elif 22.5 <= az < 67.5: pos_desc = "light source from the front-right"
         elif 67.5 <= az < 112.5: pos_desc = "light source from the right"
@@ -83,8 +79,8 @@ class QwenMultiangleLightningNode:
         elif 247.5 <= az < 292.5: pos_desc = "light source from the left"
         else: pos_desc = "light source from the front-left"
 
-        # 2. 高度区间判断 (修正为显式区间，首选底光)
-        e = light_elevation
+        # 2. 高度区间判断
+        e = elevation
         if -90 <= e < -30:
             elev_desc = "uplighting, light source positioned below the character, light shining upwards"
         elif -30 <= e < -10:
@@ -97,23 +93,48 @@ class QwenMultiangleLightningNode:
             elev_desc = "overhead top-down light source"
 
         # 3. 强度描述
-        if light_intensity < 3.0: int_desc = "soft"
-        elif light_intensity < 7.0: int_desc = "bright"
+        if intensity < 3.0: int_desc = "soft"
+        elif intensity < 7.0: int_desc = "bright"
         else: int_desc = "intense"
-        
-        color_desc = f"colored light ({light_color_hex})"
 
-        # 4. 提示词结构重组 (场景锁定优先 -> 光源位置优先 -> 属性)
+        # 4. 提示词结构
         global_constraints = "SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: "
+        color_desc = f"colored light ({color_hex})"
         light_positioning = f"{pos_desc}, {elev_desc}"
         light_attributes = f"{int_desc} {color_desc}"
         
         if cinematic_mode:
-            prompt = f"{global_constraints}{light_positioning}, {light_attributes}, cinematic relighting"
+            return f"{global_constraints}{light_positioning}, {light_attributes}, cinematic relighting"
         else:
-            prompt = f"{global_constraints}{light_positioning}, {light_attributes}"
+            return f"{global_constraints}{light_positioning}, {light_attributes}"
 
-        # 预览图处理 (语法闭合检查)
+    def generate_lighting_prompt(self, light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode=True, image=None, light_configs_json="[]", unique_id=None):
+        # 解析多配置 JSON
+        configs = []
+        if light_configs_json and light_configs_json != "[]":
+            try:
+                configs = json.loads(light_configs_json)
+            except:
+                pass
+        
+        # 生成 prompts 列表
+        prompts = []
+        if configs and len(configs) > 0:
+            # 有多配置数据，按配置生成
+            for cfg in configs:
+                prompt = self._build_prompt(
+                    cfg.get('azimuth', light_azimuth),
+                    cfg.get('elevation', light_elevation),
+                    cfg.get('intensity', light_intensity),
+                    cfg.get('color', light_color_hex),
+                    cinematic_mode
+                )
+                prompts.append(prompt)
+        else:
+            # 无多配置，使用当前 widget 值生成单个
+            prompts.append(self._build_prompt(light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode))
+
+        # 预览图处理
         image_base64 = ""
         if image is not None:
             try:
@@ -123,23 +144,15 @@ class QwenMultiangleLightningNode:
                 buffer = io.BytesIO()
                 pil_image.save(buffer, format="PNG")
                 image_base64 = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("utf-8")
-            except Exception:
-                pass
+            except: pass
 
-        result = {"ui": {"image_base64": [image_base64]}, "result": (prompt,)}
-        _cache[cache_key] = {
-            'azimuth': light_azimuth, 'elevation': light_elevation, 
-            'intensity': light_intensity, 'color': light_color_hex,
-            'cinematic': cinematic_mode, 'image_hash': image_hash, 
-            'result': result
-        }
-        return result
+        return {"ui": {"image_base64": [image_base64]}, "result": (prompts,)}
 
-# 5. 核心节点映射
+# 节点映射
 NODE_CLASS_MAPPINGS = {
-    "QwenMultiangleLightningNode": QwenMultiangleLightningNode
+    "QwenMultiangleLightningNode": QwenMultiangleLightningNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "QwenMultiangleLightningNode": "Qwen Multiangle Lightning"
+    "QwenMultiangleLightningNode": "Qwen Multiangle Lightning",
 }
