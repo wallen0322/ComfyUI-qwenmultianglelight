@@ -1,0 +1,1668 @@
+{
+  "id": "58c29d73-34f2-4cd3-82c0-ea2ff076f177",
+  "revision": 0,
+  "last_node_id": 139,
+  "last_link_id": 308,
+  "nodes": [
+    {
+      "id": 67,
+      "type": "ModelSamplingAuraFlow",
+      "pos": [
+        -1209.3335182388032,
+        -277.3333591926516
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 306
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            177
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "ModelSamplingAuraFlow"
+      },
+      "widgets_values": [
+        3.1
+      ]
+    },
+    {
+      "id": 64,
+      "type": "CFGNorm",
+      "pos": [
+        -919.3332709534948,
+        -277.3333591926516
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 177
+        }
+      ],
+      "outputs": [
+        {
+          "name": "patched_model",
+          "type": "MODEL",
+          "links": [
+            171
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "CFGNorm"
+      },
+      "widgets_values": [
+        0.95
+      ]
+    },
+    {
+      "id": 72,
+      "type": "Note",
+      "pos": [
+        -759.333413630744,
+        42.666674960948626
+      ],
+      "size": [
+        317.265625,
+        88
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "The \"Edit Model Reference Method\" nodes above are not needed if you use our files but may be needed if you use repackaged ones from other people."
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 66,
+      "type": "EmptySD3LatentImage",
+      "pos": [
+        -759.333413630744,
+        182.66660336970563
+      ],
+      "size": [
+        312.1484375,
+        106
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "EmptySD3LatentImage"
+      },
+      "widgets_values": [
+        1024,
+        1536,
+        1
+      ]
+    },
+    {
+      "id": 8,
+      "type": "VAEDecode",
+      "pos": [
+        -109.33359387194514,
+        -157.3333596978888
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 175
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            307
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 68,
+      "type": "TextEncodeQwenImageEditPlus",
+      "pos": [
+        -1209.3335182388032,
+        -177.3333418632327
+      ],
+      "size": [
+        426.6276041666667,
+        185.55989583333334
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 178
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": 295
+        },
+        {
+          "name": "image1",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 182
+        },
+        {
+          "name": "image2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "image3",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 266
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            291
+          ]
+        }
+      ],
+      "title": "TextEncodeQwenImageEditPlus (Positive)",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "TextEncodeQwenImageEditPlus"
+      },
+      "widgets_values": [
+        "图中的女人开心的看向镜头比耶，广角镜头，半身照，场景是城市街道，背景的墙面上有这个女人的卡通形象，保持和角色同样的姿势，同时墙上用喜庆的字体写着“2026好运！”，春节气氛"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 120,
+      "type": "ReferenceLatent",
+      "pos": [
+        -709.3333783403591,
+        402.6666734452366
+      ],
+      "size": [
+        219.85677083333334,
+        46
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 272
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "ReferenceLatent"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 121,
+      "type": "ReferenceLatent",
+      "pos": [
+        -709.3333783403591,
+        492.6665665636093
+      ],
+      "size": [
+        214.1015625,
+        46
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent",
+          "shape": 7,
+          "type": "LATENT",
+          "link": 275
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "ReferenceLatent"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 10,
+      "type": "VAELoader",
+      "pos": [
+        -1639.3334809274697,
+        2.666604127561527
+      ],
+      "size": [
+        311.80989583333337,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            12,
+            206,
+            295,
+            296
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "qwen_image_vae.safetensors"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 134,
+      "type": "FluxKontextMultiReferenceLatentMethod",
+      "pos": [
+        -769.333378087741,
+        -167.33337740623563
+      ],
+      "size": [
+        321.3932291666667,
+        58
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 291
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            292
+          ]
+        }
+      ],
+      "title": "Edit Model Reference Method",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "FluxKontextMultiReferenceLatentMethod"
+      },
+      "widgets_values": [
+        "index_timestep_zero"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 135,
+      "type": "FluxKontextMultiReferenceLatentMethod",
+      "pos": [
+        -769.333378087741,
+        -67.33336007681692
+      ],
+      "size": [
+        321.3932291666667,
+        58
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "conditioning",
+          "type": "CONDITIONING",
+          "link": 293
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            294
+          ]
+        }
+      ],
+      "title": "Edit Model Reference Method",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "FluxKontextMultiReferenceLatentMethod"
+      },
+      "widgets_values": [
+        "index_timestep_zero"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 65,
+      "type": "KSampler",
+      "pos": [
+        -419.3335570658487,
+        -157.3333596978888
+      ],
+      "size": [
+        270,
+        611.1851851851852
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 171
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 292
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 294
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 267
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            175
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        1000,
+        "fixed",
+        8,
+        1,
+        "euler",
+        "simple",
+        1
+      ]
+    },
+    {
+      "id": 84,
+      "type": "ImageScaleToTotalPixels",
+      "pos": [
+        -1211.717048651264,
+        408.6254994763889
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 204
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            205
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "ImageScaleToTotalPixels"
+      },
+      "widgets_values": [
+        "lanczos",
+        1.5,
+        1
+      ]
+    },
+    {
+      "id": 85,
+      "type": "VAEEncode",
+      "pos": [
+        -918.1415057472641,
+        414.5847515183383
+      ],
+      "size": [
+        187.5,
+        46
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 205
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 206
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            267,
+            272,
+            275
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 131,
+      "type": "QwenMultiangleLightningNode",
+      "pos": [
+        -2731.0558024919474,
+        481.00675753654053
+      ],
+      "size": [
+        306.71875,
+        554
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 300
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lighting_prompt",
+          "type": "STRING",
+          "links": [
+            287,
+            305
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenMultiangleLightningNode"
+      },
+      "widgets_values": [
+        1,
+        -60,
+        10,
+        "Sharp (锐利)",
+        false,
+        "",
+        "#1eff00"
+      ]
+    },
+    {
+      "id": 133,
+      "type": "QwenMultiangleLightningNode",
+      "pos": [
+        -2389.361274974278,
+        269.6563041923769
+      ],
+      "size": [
+        306.71875,
+        554
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 301
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lighting_prompt",
+          "type": "STRING",
+          "links": [
+            285
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenMultiangleLightningNode"
+      },
+      "widgets_values": [
+        165,
+        25,
+        10,
+        "Sharp (锐利)",
+        false,
+        "",
+        "#fbff00"
+      ]
+    },
+    {
+      "id": 69,
+      "type": "TextEncodeQwenImageEditPlus",
+      "pos": [
+        -1209.3335182388032,
+        70.29947110195654
+      ],
+      "size": [
+        420,
+        168
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 181
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": 296
+        },
+        {
+          "name": "image1",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 183
+        },
+        {
+          "name": "image2",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "image3",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            293
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "TextEncodeQwenImageEditPlus"
+      },
+      "widgets_values": [
+        "泛黄，AI感，不真实，丑陋，油腻的皮肤，异常的肢体，不协调的肢体"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 100,
+      "type": "easy showAnything",
+      "pos": [
+        -2023.0901267718996,
+        53.10931336701795
+      ],
+      "size": [
+        321.3151041666667,
+        199.04947916666669
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 265
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "3b224fbccde9bd35728348f9a4590dad6f603203",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "[\n    \"SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: light source in front, overhead top-down light source, bright colored light (#f00000)\",\n    \"SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: light source in front, uplighting, light source positioned below the character, light shining upwards, intense colored light (#ffffff)\",\n    \"SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: light source in front, uplighting, light source positioned below the character, light shining upwards, intense colored light (#1eff00)\",\n    \"SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: light source from the front-right, uplighting, light source positioned below the character, light shining upwards, intense colored light (#ff0095)\",\n    \"SCENE LOCK, FIXED VIEWPOINT, maintaining character consistency and pose. RELIGHTING ONLY: light source from the back-right, high-angle light source, intense colored light (#fbff00)\"\n]"
+      ]
+    },
+    {
+      "id": 41,
+      "type": "LoadImage",
+      "pos": [
+        -3206.858837153497,
+        -743.7989135954153
+      ],
+      "size": [
+        415.6640625,
+        582.2265625
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            182,
+            183,
+            204,
+            297,
+            298,
+            299,
+            300,
+            301,
+            302
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "pasted/image (1129).png",
+        "image"
+      ]
+    },
+    {
+      "id": 73,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        -1212.3018762469608,
+        -406.3539378388614
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 190
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            306
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "LoraLoaderModelOnly"
+      },
+      "widgets_values": [
+        "2511\\Qwen-Image-Edit-2511-Lightning-8steps-V1.0-fp32.safetensors",
+        1
+      ]
+    },
+    {
+      "id": 90,
+      "type": "easy promptList",
+      "pos": [
+        -2050.8563620287136,
+        -332.4787289860009
+      ],
+      "size": [
+        358.48459781272277,
+        324
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "optional_prompt_list",
+          "shape": 7,
+          "type": "LIST",
+          "link": null
+        },
+        {
+          "name": "prompt_1",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt_1"
+          },
+          "link": 258
+        },
+        {
+          "name": "prompt_2",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt_2"
+          },
+          "link": 288
+        },
+        {
+          "name": "prompt_3",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt_3"
+          },
+          "link": 287
+        },
+        {
+          "name": "prompt_4",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt_4"
+          },
+          "link": 286
+        },
+        {
+          "name": "prompt_5",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt_5"
+          },
+          "link": 285
+        }
+      ],
+      "outputs": [
+        {
+          "name": "prompt_list",
+          "type": "LIST",
+          "links": [
+            265
+          ]
+        },
+        {
+          "name": "prompt_strings",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            266
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "9947b8be70e17ceabafa4fa7f476b54626de4704",
+        "Node name for S&R": "easy promptList"
+      },
+      "widgets_values": [
+        "让图1模特穿着图2的服装优雅地站在凡尔赛宫前的广场上，逆光，发丝光，低机位仰拍",
+        "让图1模特穿着图2的服装行优雅地站在塞纳河边，高机位俯拍，半身像，发丝光，时尚摄影",
+        "让图1模特穿着图2的服装优雅地站在凯旋门前，发丝光，时尚摄影，倾斜构图",
+        "",
+        ""
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 12,
+      "type": "UNETLoader",
+      "pos": [
+        -1657.0735240625545,
+        -324.78708286424904
+      ],
+      "size": [
+        375.55989583333337,
+        82
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            190
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "qwen_image_edit_2511_bf16.safetensors",
+        "fp8_e4m3fn"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 61,
+      "type": "CLIPLoader",
+      "pos": [
+        -1656.4968873305068,
+        -171.66029684131843
+      ],
+      "size": [
+        381.9921875,
+        106
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            178,
+            181
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "qwenimage\\qwen_2.5_vl_7b_fp8_scaled.safetensors",
+        "qwen_image",
+        "default"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 114,
+      "type": "QwenMultiangleLightningNode",
+      "pos": [
+        -2725.80372837398,
+        -737.2882711131645
+      ],
+      "size": [
+        306.71875,
+        554
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 297
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lighting_prompt",
+          "type": "STRING",
+          "links": [
+            258
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenMultiangleLightningNode"
+      },
+      "widgets_values": [
+        5,
+        -90,
+        5.8,
+        "Sharp (锐利)",
+        true,
+        "",
+        "#eb0000"
+      ]
+    },
+    {
+      "id": 130,
+      "type": "QwenMultiangleLightningNode",
+      "pos": [
+        -2730.2757633858428,
+        -131.35856522639833
+      ],
+      "size": [
+        306.71875,
+        554
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 298
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lighting_prompt",
+          "type": "STRING",
+          "links": [
+            288
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenMultiangleLightningNode"
+      },
+      "widgets_values": [
+        12,
+        -90,
+        10,
+        "Sharp (锐利)",
+        true,
+        "",
+        "#ffffff"
+      ]
+    },
+    {
+      "id": 136,
+      "type": "GeminiImage2Node",
+      "pos": [
+        -2760,
+        1450
+      ],
+      "size": [
+        400,
+        348
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 302
+        },
+        {
+          "name": "files",
+          "shape": 7,
+          "type": "GEMINI_INPUT_FILES",
+          "link": null
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": 305
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            308
+          ]
+        },
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "GeminiImage2Node"
+      },
+      "widgets_values": [
+        "",
+        "gemini-3-pro-image-preview",
+        388005979862164,
+        "fixed",
+        "auto",
+        "1K",
+        "IMAGE+TEXT",
+        "You are an expert image-generation engine. You must ALWAYS produce an image.\nInterpret all user input—regardless of format, intent, or abstraction—as literal visual directives for image composition.\nIf a prompt is conversational or lacks specific visual details, you must creatively invent a concrete visual scenario that depicts the concept.\nPrioritize generating the visual representation above any text, formatting, or conversational requests.",
+        "Status: Completed\nPrice: 29.2 credits\nTime elapsed: 20s"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 132,
+      "type": "QwenMultiangleLightningNode",
+      "pos": [
+        -2390.3357383701673,
+        -333.35211865049223
+      ],
+      "size": [
+        306.71875,
+        554
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 299
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lighting_prompt",
+          "type": "STRING",
+          "links": [
+            286
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "QwenMultiangleLightningNode"
+      },
+      "widgets_values": [
+        65,
+        -77,
+        10,
+        "Sharp (锐利)",
+        false,
+        "",
+        "#ff0095"
+      ]
+    },
+    {
+      "id": 138,
+      "type": "PreviewImage",
+      "pos": [
+        150.96112443233474,
+        -581.8744563074745
+      ],
+      "size": [
+        1263.9104403384097,
+        1459.9029606886631
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 307
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.6.0",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 139,
+      "type": "PreviewImage",
+      "pos": [
+        -2350,
+        1450
+      ],
+      "size": [
+        423.9639738210476,
+        671.5425808682088
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 308
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.8.2",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    }
+  ],
+  "links": [
+    [
+      12,
+      10,
+      0,
+      8,
+      1,
+      "VAE"
+    ],
+    [
+      171,
+      64,
+      0,
+      65,
+      0,
+      "MODEL"
+    ],
+    [
+      175,
+      65,
+      0,
+      8,
+      0,
+      "LATENT"
+    ],
+    [
+      177,
+      67,
+      0,
+      64,
+      0,
+      "MODEL"
+    ],
+    [
+      178,
+      61,
+      0,
+      68,
+      0,
+      "CLIP"
+    ],
+    [
+      181,
+      61,
+      0,
+      69,
+      0,
+      "CLIP"
+    ],
+    [
+      182,
+      41,
+      0,
+      68,
+      2,
+      "IMAGE"
+    ],
+    [
+      183,
+      41,
+      0,
+      69,
+      2,
+      "IMAGE"
+    ],
+    [
+      190,
+      12,
+      0,
+      73,
+      0,
+      "MODEL"
+    ],
+    [
+      204,
+      41,
+      0,
+      84,
+      0,
+      "IMAGE"
+    ],
+    [
+      205,
+      84,
+      0,
+      85,
+      0,
+      "IMAGE"
+    ],
+    [
+      206,
+      10,
+      0,
+      85,
+      1,
+      "VAE"
+    ],
+    [
+      258,
+      114,
+      0,
+      90,
+      1,
+      "STRING"
+    ],
+    [
+      265,
+      90,
+      0,
+      100,
+      0,
+      "LIST"
+    ],
+    [
+      266,
+      90,
+      1,
+      68,
+      5,
+      "STRING"
+    ],
+    [
+      267,
+      85,
+      0,
+      65,
+      3,
+      "LATENT"
+    ],
+    [
+      272,
+      85,
+      0,
+      120,
+      1,
+      "LATENT"
+    ],
+    [
+      275,
+      85,
+      0,
+      121,
+      1,
+      "LATENT"
+    ],
+    [
+      285,
+      133,
+      0,
+      90,
+      5,
+      "STRING"
+    ],
+    [
+      286,
+      132,
+      0,
+      90,
+      4,
+      "STRING"
+    ],
+    [
+      287,
+      131,
+      0,
+      90,
+      3,
+      "STRING"
+    ],
+    [
+      288,
+      130,
+      0,
+      90,
+      2,
+      "STRING"
+    ],
+    [
+      291,
+      68,
+      0,
+      134,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      292,
+      134,
+      0,
+      65,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      293,
+      69,
+      0,
+      135,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      294,
+      135,
+      0,
+      65,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      295,
+      10,
+      0,
+      68,
+      1,
+      "VAE"
+    ],
+    [
+      296,
+      10,
+      0,
+      69,
+      1,
+      "VAE"
+    ],
+    [
+      297,
+      41,
+      0,
+      114,
+      0,
+      "IMAGE"
+    ],
+    [
+      298,
+      41,
+      0,
+      130,
+      0,
+      "IMAGE"
+    ],
+    [
+      299,
+      41,
+      0,
+      132,
+      0,
+      "IMAGE"
+    ],
+    [
+      300,
+      41,
+      0,
+      131,
+      0,
+      "IMAGE"
+    ],
+    [
+      301,
+      41,
+      0,
+      133,
+      0,
+      "IMAGE"
+    ],
+    [
+      302,
+      41,
+      0,
+      136,
+      0,
+      "IMAGE"
+    ],
+    [
+      305,
+      131,
+      0,
+      136,
+      2,
+      "STRING"
+    ],
+    [
+      306,
+      73,
+      0,
+      67,
+      0,
+      "MODEL"
+    ],
+    [
+      307,
+      8,
+      0,
+      138,
+      0,
+      "IMAGE"
+    ],
+    [
+      308,
+      136,
+      0,
+      139,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "nano banana pro",
+      "bounding": [
+        -2770,
+        1376.4,
+        853.9639738210476,
+        755.1425808682089
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Qwen edit 2511",
+      "bounding": [
+        -1667.0735240625545,
+        -655.4744563074745,
+        3091.945088833299,
+        1543.502960688663
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.4736244074478024,
+      "offset": [
+        3373.194140341498,
+        1272.77293379246
+      ]
+    },
+    "frontendVersion": "1.36.13",
+    "workflowRendererVersion": "LG",
+    "groupNodes": {},
+    "VHS_latentpreview": true,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
