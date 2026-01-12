@@ -9,6 +9,7 @@ import base64
 import io
 import hashlib
 import torch
+import json
 
 _cache = {}
 _max_cache_size = 50
@@ -42,11 +43,13 @@ class QwenMultiangleLightningNode:
             },
             "hidden": {
                 "unique_id": "UNIQUE_ID",
+                "light_configs_json": ("STRING", {"default": "[]"}),
             }
         }
 
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("lighting_prompt",)
+    OUTPUT_IS_LIST = (True,)
     FUNCTION = "generate_lighting_prompt"
     CATEGORY = "image/lighting"
     OUTPUT_NODE = True
@@ -62,21 +65,10 @@ class QwenMultiangleLightningNode:
         except:
             return str(hash(str(image)))
 
-    def generate_lighting_prompt(self, light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode=True, image=None, unique_id=None):
-        cache_key = str(unique_id) if unique_id else "default"
-        image_hash = self._compute_image_hash(image)
-        cached = _cache.get(cache_key, {})
-        
-        if (cached.get('azimuth') == light_azimuth and 
-            cached.get('elevation') == light_elevation and 
-            cached.get('intensity') == light_intensity and
-            cached.get('color') == light_color_hex and
-            cached.get('cinematic') == cinematic_mode and
-            cached.get('image_hash') == image_hash):
-            return cached['result']
-
+    def _build_prompt(self, azimuth, elevation, intensity, color_hex, cinematic_mode):
+        """根据单个配置生成 prompt"""
         # 1. 映射光照方位描述
-        az = light_azimuth % 360
+        az = azimuth % 360
         if az < 22.5 or az >= 337.5: pos_desc = "light hitting from the front"
         elif az < 67.5: pos_desc = "light hitting from the front-right side"
         elif az < 112.5: pos_desc = "light hitting from the right (90 degrees)"
@@ -86,36 +78,60 @@ class QwenMultiangleLightningNode:
         elif az < 292.5: pos_desc = "light hitting from the left (90 degrees)"
         else: pos_desc = "light hitting from the front-left side"
 
-        # 2. 映射光照高度（避免使用俯仰角相关词汇）
-        if light_elevation <= -60: elev_desc = "extreme low-angle light source, strong bottom-up shadow"
-        elif light_elevation < -30: elev_desc = "low-level light source, bottom-up shadow"
-        elif light_elevation < 20: elev_desc = "horizontal light source"
-        elif light_elevation < 60: elev_desc = "high-positioned light source"
+        # 2. 映射光照高度
+        if elevation <= -60: elev_desc = "extreme low-angle light source, strong bottom-up shadow"
+        elif elevation < -30: elev_desc = "low-level light source, bottom-up shadow"
+        elif elevation < 20: elev_desc = "horizontal light source"
+        elif elevation < 60: elev_desc = "high-positioned light source"
         else: elev_desc = "top-down ceiling light source"
 
         # 3. 强度描述
-        if light_intensity < 3.0: int_desc = "soft ambient"
-        elif light_intensity < 7.0: int_desc = "bright directional"
+        if intensity < 3.0: int_desc = "soft ambient"
+        elif intensity < 7.0: int_desc = "bright directional"
         else: int_desc = "strong dramatic contrast"
 
-        # --- 核心修改：极致场景与镜头锁定 ---
-        # 加入了 SCENE LOCK 和 CONSTANT BACKGROUND 等强力提示词
         global_constraints = (
-            "SCENE LOCK, CONSTANT BACKGROUND, FIXED SCENERY. " # 锁定场景和背景
-            "STATIC SHOT, FIXED VIEWPOINT, NO CAMERA MOVEMENT. " # 锁定镜头
+            "SCENE LOCK, CONSTANT BACKGROUND, FIXED SCENERY. "
+            "STATIC SHOT, FIXED VIEWPOINT, NO CAMERA MOVEMENT. "
             "maintaining character consistency, "
             "keeping the same character pose and action, "
             "maintaining the same composition, "
-            "RELIGHTING ONLY: only the light rays and shadows change, the scene remains untouched. " # 明确重塑光影任务
+            "RELIGHTING ONLY: only the light rays and shadows change, the scene remains untouched. "
         )
         
-        color_desc = f"colored light (hex: {light_color_hex})"
+        color_desc = f"colored light (hex: {color_hex})"
         detail_prompt = f"{int_desc} {color_desc}, {pos_desc}, {elev_desc}"
         
         if cinematic_mode:
-            prompt = f"{global_constraints}professional cinematic relighting, {detail_prompt}, raytraced shadows, realistic global illumination"
+            return f"{global_constraints}professional cinematic relighting, {detail_prompt}, raytraced shadows, realistic global illumination"
         else:
-            prompt = f"{global_constraints}{detail_prompt}"
+            return f"{global_constraints}{detail_prompt}"
+
+    def generate_lighting_prompt(self, light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode=True, image=None, light_configs_json="[]", unique_id=None):
+        # 解析多配置 JSON
+        configs = []
+        if light_configs_json:
+            try:
+                configs = json.loads(light_configs_json)
+            except:
+                pass
+        
+        # 生成 prompts 列表
+        prompts = []
+        if configs:
+            # 有多配置数据，按配置生成
+            for cfg in configs:
+                prompt = self._build_prompt(
+                    cfg.get('azimuth', light_azimuth),
+                    cfg.get('elevation', light_elevation),
+                    cfg.get('intensity', light_intensity),
+                    cfg.get('color', light_color_hex),
+                    cinematic_mode
+                )
+                prompts.append(prompt)
+        else:
+            # 无多配置，使用当前 widget 值生成单个
+            prompts.append(self._build_prompt(light_azimuth, light_elevation, light_intensity, light_color_hex, cinematic_mode))
 
         # 预览图处理
         image_base64 = ""
@@ -129,16 +145,7 @@ class QwenMultiangleLightningNode:
                 image_base64 = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("utf-8")
             except: pass
 
-        result = {"ui": {"image_base64": [image_base64]}, "result": (prompt,)}
-        
-        _cache[cache_key] = {
-            'azimuth': light_azimuth, 'elevation': light_elevation, 
-            'intensity': light_intensity, 'color': light_color_hex,
-            'cinematic': cinematic_mode, 'image_hash': image_hash, 
-            'result': result
-        }
-        
-        return result
+        return {"ui": {"image_base64": [image_base64]}, "result": (prompts,)}
 
 NODE_CLASS_MAPPINGS = {
     "QwenMultiangleLightningNode": QwenMultiangleLightningNode,
